@@ -11,6 +11,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
+@ToString
 public class Appointment {
 
     @Id
@@ -24,10 +25,12 @@ public class Appointment {
     private String reason;
 
     @ManyToOne
-    @JoinColumn(nullable = false)
+    @ToString.Exclude
+    @JoinColumn(nullable = false) // patient is required and not nullable
     private Patient patient;
 
     @ManyToOne(fetch = FetchType.LAZY)
+    @ToString.Exclude
     @JoinColumn(nullable = false)
     private Doctor doctor;
 }

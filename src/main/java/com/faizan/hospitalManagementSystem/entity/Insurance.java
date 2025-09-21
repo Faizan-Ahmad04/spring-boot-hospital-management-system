@@ -21,11 +21,14 @@ public class Insurance {
     @Column(nullable = false, unique = true, length = 50)
     private String policyNumber;
 
+    @Column(nullable = false, length = 100)
+    private String provider;
+
     @Column(nullable = false)
     private LocalDate validUntil;
 
     private LocalDateTime createdAt;
 
-    @OneToOne(mappedBy = "insurance")
+    @OneToOne(mappedBy = "insurance") // inverse side
     private Patient patient;
 }

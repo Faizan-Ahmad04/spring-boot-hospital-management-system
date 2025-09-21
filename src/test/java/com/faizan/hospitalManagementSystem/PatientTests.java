@@ -28,12 +28,12 @@ public class PatientTests {
     @Test
     public void testPatientRepository() {
 
-        List<Patient> patientList = patientRepository.findAll();
+//        List<Patient> patientList = patientRepository.findAll();
+        List<Patient> patientList = patientRepository.findAllPatientWithAppointment();
         System.out.println("All patients: " + patientList);
 
-        for(Patient patient: patientList) {
-            System.out.println(patient);
-        }
+
+
     }
 
     @Test
