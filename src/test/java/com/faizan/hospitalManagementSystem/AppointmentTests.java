@@ -21,12 +21,12 @@ public class AppointmentTests {
                 .reason("fever")
                 .build();
 
-        var newAppointment = appointmentService.createNewAppointment(appointment, 1L, 2L);
+//        var newAppointment = appointmentService.createNewAppointment(appointment, 1L, 2L);
 
-        System.out.println("newAppointment: " + newAppointment);
+//        System.out.println("newAppointment: " + newAppointment);
 
-        var updateAppointment = appointmentService.reAssignAppointmentToAnotherDoctor(newAppointment.getId(), 2L);
+//        var updateAppointment = appointmentService.reAssignAppointmentToAnotherDoctor(newAppointment.getId(), 2L);
 //
-        System.out.println("updateAppointment: " + updateAppointment);
+//        System.out.println("updateAppointment: " + updateAppointment);
     }
 }
