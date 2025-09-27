@@ -4,6 +4,7 @@ import com.faizan.hospitalManagementSystem.dto.PatientResponseDto;
 import com.faizan.hospitalManagementSystem.service.PatientService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -23,6 +24,9 @@ public class AdminController {
             @RequestParam(value = "page", defaultValue = "0") Integer pageNumber,
             @RequestParam(value = "size", defaultValue = "10") Integer pageSize
     ) {
+
+//        User user = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+
         return ResponseEntity.ok(patientService.getAllPatient(pageNumber, pageSize));
     }
 }
