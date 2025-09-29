@@ -25,8 +25,6 @@ public class AdminController {
             @RequestParam(value = "size", defaultValue = "10") Integer pageSize
     ) {
 
-//        User user = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-
         return ResponseEntity.ok(patientService.getAllPatient(pageNumber, pageSize));
     }
 }
