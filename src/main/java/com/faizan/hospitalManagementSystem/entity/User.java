@@ -1,10 +1,12 @@
 package com.faizan.hospitalManagementSystem.entity;
 
+import com.faizan.hospitalManagementSystem.entity.type.AuthProviderType;
 import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import java.security.AuthProvider;
 import java.util.Collection;
 import java.util.List;
 
@@ -15,7 +17,9 @@ import java.util.List;
 @NoArgsConstructor
 @Builder
 @ToString
-@Table(name="users")
+@Table(name="users", indexes = {
+        @Index(name = "idx_provider_id_provider_type", columnList = "providerId, providerType" )
+})
 public class User implements UserDetails {
 
     @Id
@@ -27,6 +31,10 @@ public class User implements UserDetails {
 
     private String password;
 
+    private String providerId;
+
+    @Enumerated(EnumType.STRING)
+    private AuthProviderType providerType;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
