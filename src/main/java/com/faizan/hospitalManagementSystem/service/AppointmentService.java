@@ -12,6 +12,8 @@ import com.faizan.hospitalManagementSystem.repository.PatientRepository;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
+import org.springframework.security.access.annotation.Secured;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -45,6 +47,7 @@ public class AppointmentService {
 //    }
 
     @Transactional
+    @Secured("ROLE_PATIENT")
     public AppointmentResponseDto createNewAppointment(CreateAppointmentRequestDto createAppointmentRequestDto) {
         Long doctorId = createAppointmentRequestDto.getDoctorId();
         Long patientId = createAppointmentRequestDto.getPatientId();
@@ -68,6 +71,7 @@ public class AppointmentService {
     }
 
     @Transactional
+    @PreAuthorize("hasAuthority('appointment:write') OR #doctorId == authentication.principal.id")
     public Appointment reAssignAppointmentToAnotherDoctor(Long appointmentId, Long doctorId) {
         Appointment appointment = appointmentRepository.findById(appointmentId)
                 .orElseThrow(() -> new EntityNotFoundException("Appointment not found with id: " + appointmentId));
@@ -82,6 +86,7 @@ public class AppointmentService {
     }
 
     @Transactional
+    @PreAuthorize("hasRole('ADMIN') OR (hasRole('DOCTOR) AND #doctorIid == authentication.principal.id)")
     public List<AppointmentResponseDto> getAllAppointmentsOfDoctor(long doctorIid) {
         Doctor doctor = doctorRepository.findById(doctorIid)
                 .orElseThrow(() -> new EntityNotFoundException("Doctor not found with id: " + doctorIid));

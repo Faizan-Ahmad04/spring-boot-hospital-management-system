@@ -11,6 +11,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.print.Doc;
 import java.util.List;
@@ -32,6 +33,7 @@ public class DoctorService {
                 .collect(Collectors.toList());
     }
 
+    @Transactional
     public DoctorResponseDto onBoardNewDoctor(OnboardDoctorRequestDto onboardDoctorRequestDto) {
         User user= userRepository.findById(onboardDoctorRequestDto.getUserId()).orElseThrow();
 
@@ -45,7 +47,7 @@ public class DoctorService {
                 .user(user)
                 .build();
 
-        user.getRole().add(RoleType.DOCTOR);
+        user.getRoles().add(RoleType.DOCTOR);
 
         return modelMapper.map(doctorRepository.save(doctor), DoctorResponseDto.class);
     }

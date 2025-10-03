@@ -52,7 +52,7 @@ public class User implements UserDetails {
 //                .collect(Collectors.toSet());
 
         Set<SimpleGrantedAuthority> authorities = new HashSet<>();
-        role.forEach(
+        roles.forEach(
                 role -> {
                     Set<SimpleGrantedAuthority> permission = RolePermissionMapping.getAuthoritiesForRole(role);
                     authorities.addAll(permission);

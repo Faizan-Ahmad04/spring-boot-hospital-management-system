@@ -1,9 +1,11 @@
 package com.faizan.hospitalManagementSystem.controller;
 
 import com.faizan.hospitalManagementSystem.dto.AppointmentResponseDto;
+import com.faizan.hospitalManagementSystem.entity.User;
 import com.faizan.hospitalManagementSystem.service.AppointmentService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -19,6 +21,7 @@ public class DoctorController {
 
     @GetMapping("/appointments")
     public ResponseEntity<List<AppointmentResponseDto>> getAllAppointmentsOfDoctor() {
-        return ResponseEntity.ok(appointmentService.getAllAppointmentsOfDoctor(1L));
+        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        return ResponseEntity.ok(appointmentService.getAllAppointmentsOfDoctor(user.getId()));
     }
 }

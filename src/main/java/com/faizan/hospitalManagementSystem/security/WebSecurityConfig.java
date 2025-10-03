@@ -24,14 +24,14 @@ public class WebSecurityConfig {
     private final HandlerExceptionResolver handlerExceptionResolver;
 
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurityt) throws Exception {
-        httpSecurityt
+    public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
+        httpSecurity
                 .csrf(csrfConfig -> csrfConfig.disable())
                 .sessionManagement(sessionConfig ->
                         sessionConfig.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/public/**", "/auth/**").permitAll()
-                        .requestMatchers(HttpMethod.DELETE, "/admin/**")
+                        .requestMatchers(HttpMethod.DELETE, "admin/**")
                         .hasAnyAuthority(APPOINTMENT_DELETE.name(),
                                 USER_MANAGE.name())
                         .requestMatchers("/admin/**").hasRole(ADMIN.name())
@@ -41,13 +41,17 @@ public class WebSecurityConfig {
                 .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)
                 .oauth2Login(oAuth2 -> oAuth2
                         .failureHandler((request, response, exception) -> {
-                            log.error(("OAuth2 error: {}" + exception.getMessage());
+                            log.error("OAuth2 error: {}" + exception.getMessage());
                             handlerExceptionResolver.resolveException(request, response, null, exception);
                         })
                         .successHandler(oAuth2SuccessHandler)
-                );
+                ).
+                exceptionHandling(exceptionHandlingConfigurer ->
+                    exceptionHandlingConfigurer.accessDeniedHandler((request, response, accessDeniedException) -> {
+                        handlerExceptionResolver.resolveException(request, response, null, accessDeniedException);
+                    }));
 //                .formLogin(Customizer.withDefaults());
-        return httpSecurityt.build();
+        return httpSecurity.build();
     }
 
 }
