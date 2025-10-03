@@ -2,9 +2,13 @@ package com.faizan.hospitalManagementSystem.security;
 
 import com.faizan.hospitalManagementSystem.dto.LoginRequestDto;
 import com.faizan.hospitalManagementSystem.dto.LoginResponseDto;
+import com.faizan.hospitalManagementSystem.dto.SignUpRequestDto;
 import com.faizan.hospitalManagementSystem.dto.SignupResponseDto;
+import com.faizan.hospitalManagementSystem.entity.Patient;
 import com.faizan.hospitalManagementSystem.entity.User;
 import com.faizan.hospitalManagementSystem.entity.type.AuthProviderType;
+import com.faizan.hospitalManagementSystem.entity.type.RoleType;
+import com.faizan.hospitalManagementSystem.repository.PatientRepository;
 import com.faizan.hospitalManagementSystem.repository.UserRepository;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
@@ -19,6 +23,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
 
+import java.util.Set;
+
 @Service
 @RequiredArgsConstructor
 @Slf4j
@@ -29,6 +35,7 @@ public class AuthService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final ModelMapper modelMapper;
+    private final PatientRepository patientRepository;
 
     public LoginResponseDto login(LoginRequestDto loginRequestDto) {
         Authentication authentication = authenticationManager.authenticate(
@@ -45,7 +52,7 @@ public class AuthService {
                 .build();
     }
 
-    public User signUpInternal(LoginRequestDto signupRequestDto, AuthProviderType authProviderType, String providerId) {
+    public User signUpInternal(SignUpRequestDto signupRequestDto, AuthProviderType authProviderType, String providerId) {
         User user = userRepository.findByUsername(signupRequestDto.getUsername()).orElse(null);
         if (user != null) throw new IllegalArgumentException("User already exists");
 
@@ -53,19 +60,29 @@ public class AuthService {
                 .username(signupRequestDto.getUsername())
                 .providerId(providerId)
                 .providerType(authProviderType)
+                .roles(signupRequestDto.getRoles()) // Role.PATIENT
                 .build();
 
         if (authProviderType == AuthProviderType.EMAIL) {
             user.setPassword(passwordEncoder.encode(signupRequestDto.getPassword()));
         }
-      return  userRepository.save(user);
 
+
+        user = userRepository.save(user);
+
+        Patient patient = Patient.builder()
+                .name(signupRequestDto.getName())
+                .email(signupRequestDto.getUsername())
+                .user(user)
+                .build();
+
+        patientRepository.save(patient);
+
+      return  user;
     }
 
-    public SignupResponseDto signup(LoginRequestDto signupRequestDto) {
-        log.info("signupRequestDto{}", signupRequestDto);
+    public SignupResponseDto signup(SignUpRequestDto signupRequestDto) {
         User user = signUpInternal(signupRequestDto, AuthProviderType.EMAIL, null);
-        log.info("user--0=0=-0=0=-0=0=0{}", user);
 
         return SignupResponseDto.builder()
                 .username(user.getUsername())
@@ -79,13 +96,14 @@ public class AuthService {
 
         User user = userRepository.findByProviderIdAndProviderType(providerId, providerType).orElse(null);
         String email = oAuth2User.getAttribute("email");
+        String name = oAuth2User.getAttribute("name");
 
         User emailUser = userRepository.findByUsername(email).orElse(null);
 
         if(user == null && emailUser == null) {
             // signup flow:
             String username = authUtil.determineUsernameFromOAuth2User(oAuth2User, registrationId, providerId);
-            user = signUpInternal(new LoginRequestDto(username, null), providerType, providerId);
+            user = signUpInternal(new SignUpRequestDto(username, null, name, Set.of(RoleType.PATIENT)), providerType, providerId);
         } else if(user != null) {
             if(email != null && !email.isBlank() && !email.equals(user.getUsername())) {
                 user.setUsername(email);

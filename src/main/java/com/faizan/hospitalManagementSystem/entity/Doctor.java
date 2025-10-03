@@ -30,6 +30,10 @@ public class Doctor {
     @Column(nullable = false, length = 100)
     private String specialization;
 
+    @OneToOne
+    @MapsId
+    private User user;
+
     @ManyToMany(mappedBy = "doctors")
     private Set<Department> departments = new HashSet<>();
 

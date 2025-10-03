@@ -1,12 +1,15 @@
 package com.faizan.hospitalManagementSystem.entity;
 
 import com.faizan.hospitalManagementSystem.entity.type.BloodGroupType;
+import com.faizan.hospitalManagementSystem.entity.type.RoleType;
 import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Entity
 @Getter
@@ -36,6 +39,10 @@ public class Patient {
 
     @Enumerated(EnumType.STRING)
     private BloodGroupType bloodGroup;
+
+    @OneToOne
+    @MapsId
+    private User user;
 
     @OneToOne(cascade = {CascadeType.ALL}, orphanRemoval = true)
     private Insurance insurance;

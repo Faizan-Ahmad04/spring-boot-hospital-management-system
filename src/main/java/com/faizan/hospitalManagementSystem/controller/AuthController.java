@@ -2,6 +2,7 @@ package com.faizan.hospitalManagementSystem.controller;
 
 import com.faizan.hospitalManagementSystem.dto.LoginRequestDto;
 import com.faizan.hospitalManagementSystem.dto.LoginResponseDto;
+import com.faizan.hospitalManagementSystem.dto.SignUpRequestDto;
 import com.faizan.hospitalManagementSystem.dto.SignupResponseDto;
 import com.faizan.hospitalManagementSystem.security.AuthService;
 import lombok.RequiredArgsConstructor;
@@ -25,7 +26,7 @@ public class AuthController {
     }
 
     @PostMapping("/signup")
-    public ResponseEntity<SignupResponseDto> signup(@RequestBody LoginRequestDto signupRequestDto) {
+    public ResponseEntity<SignupResponseDto> signup(@RequestBody SignUpRequestDto signupRequestDto) {
         return new ResponseEntity<>(authService.signup(signupRequestDto), HttpStatus.CREATED);
     }
 }

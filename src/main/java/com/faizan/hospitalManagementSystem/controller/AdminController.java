@@ -1,14 +1,15 @@
 package com.faizan.hospitalManagementSystem.controller;
 
+import com.faizan.hospitalManagementSystem.dto.DoctorResponseDto;
+import com.faizan.hospitalManagementSystem.dto.OnboardDoctorRequestDto;
 import com.faizan.hospitalManagementSystem.dto.PatientResponseDto;
+import com.faizan.hospitalManagementSystem.service.DoctorService;
 import com.faizan.hospitalManagementSystem.service.PatientService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -18,6 +19,7 @@ import java.util.List;
 public class AdminController {
 
     private final PatientService patientService;
+    private final DoctorService doctorService;
 
     @GetMapping("/patients")
     public ResponseEntity<List<PatientResponseDto>> getAllPatient(
@@ -26,5 +28,9 @@ public class AdminController {
     ) {
 
         return ResponseEntity.ok(patientService.getAllPatient(pageNumber, pageSize));
+    }
+
+    public ResponseEntity<DoctorResponseDto> onBoardNewDoctor(@RequestBody OnboardDoctorRequestDto onboardDoctorRequestDto) {
+        return ResponseEntity.status(HttpStatus.CREATED).body(doctorService.onBoardNewDoctor(onboardDoctorRequestDto));
     }
 }
