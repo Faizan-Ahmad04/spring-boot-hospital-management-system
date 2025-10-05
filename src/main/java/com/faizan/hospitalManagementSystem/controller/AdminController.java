@@ -6,6 +6,7 @@ import com.faizan.hospitalManagementSystem.dto.PatientResponseDto;
 import com.faizan.hospitalManagementSystem.service.DoctorService;
 import com.faizan.hospitalManagementSystem.service.PatientService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -22,6 +23,7 @@ public class AdminController {
     private final DoctorService doctorService;
 
     @GetMapping("/patients")
+    @Cacheable(cacheNames = "patients", key = "#pageNumber + '-' + #pageSize")
     public ResponseEntity<List<PatientResponseDto>> getAllPatient(
             @RequestParam(value = "page", defaultValue = "0") Integer pageNumber,
             @RequestParam(value = "size", defaultValue = "10") Integer pageSize

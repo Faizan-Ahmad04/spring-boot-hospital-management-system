@@ -4,6 +4,7 @@ import com.faizan.hospitalManagementSystem.dto.AppointmentResponseDto;
 import com.faizan.hospitalManagementSystem.entity.User;
 import com.faizan.hospitalManagementSystem.service.AppointmentService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -20,6 +21,7 @@ public class DoctorController {
     private final AppointmentService appointmentService;
 
     @GetMapping("/appointments")
+    @Cacheable(cacheNames = "appointments", key = "#root.authentication.principal.id")
     public ResponseEntity<List<AppointmentResponseDto>> getAllAppointmentsOfDoctor() {
         User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         return ResponseEntity.ok(appointmentService.getAllAppointmentsOfDoctor(user.getId()));
